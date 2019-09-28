@@ -1,0 +1,53 @@
+import boto3
+import time
+from tkinter import *
+# Get the service resource
+def send():
+    #print(str)
+    message=str.get()
+    client = boto3.client('sqs')
+    response = client.send_message(QueueUrl='https://sqs.us-east-1.amazonaws.com/335647194796/aws_duilie', MessageBody=message)
+    print(response)
+
+def receive():
+    entry2.delete(0, END)
+    client = boto3.client('sqs')
+    response = client.receive_message(QueueUrl='https://sqs.us-east-1.amazonaws.com/335647194796/aws_duilie')
+    #while True:
+    if "Messages" in response:
+        #print(response)
+        #print(response['Messages'][0]['Body'])
+        entry2.insert(10, response['Messages'][0]['Body'])
+        #print(response['Messages'][0]['ReceiptHandle'])
+        client.delete_message(QueueUrl='https://sqs.us-east-1.amazonaws.com/335647194796/aws_duilie',ReceiptHandle=response['Messages'][0]['ReceiptHandle'])
+        
+    else:
+        entry2.insert(10,'无信息')
+        time.sleep(3)
+
+root = Tk()
+root.title('客户端')
+Label(root, text="send_message").grid(row=0)
+Label(root, text="receive_message").grid(row=1)
+#Entry控件布局
+str=StringVar()    
+entry=Entry(root,textvariable=str)
+entry2=Entry(root)
+entry.grid(row=0, column=1)
+entry2.grid(row=1, column=1)
+Button(root, text='send', command=send).grid(row=2, column=1, sticky=E, padx=5, pady=5)
+#print)
+Button(root, text='receive', command=receive).grid(row=2, column=1, sticky=W, padx=5, pady=5)
+root.mainloop()
+    #response[]
+    #print(response['Messages'][0]['Body'])
+    #body=Messages[body]
+    #print(body)
+#str="hello,c"
+#send(str)
+#receive()
+#send(str)
+#send(str)
+#send
+
+
